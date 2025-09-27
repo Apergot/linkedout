@@ -7,9 +7,6 @@ const mutations: MutationResolvers = {
     addBook: async (_, { title, author }, { dataSources }) => {
         return dataSources.booksAPI.addBook({ title, author });
     },
-    deleteBook: async (_, {title, author}, { dataSources }) => {
-        return dataSources.booksAPI.deleteBook({ title, author });
-    }
 };
 
 export default mutations;

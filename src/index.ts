@@ -3,6 +3,7 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import {BooksDataSource} from "./datasources";
 import resolvers from "./resolvers";
+import config from "./config";
 
 export interface MyContext {
     dataSources: {
@@ -25,6 +26,7 @@ async function bootstrap() {
         //  2. install your ApolloServer instance as middleware
         //  3. prepares your app to handle incoming requests
         const { url } = await startStandaloneServer(server, {
+            listen: { port: config.port(), host: "0.0.0.0" },
             context: async () => {
                 return {
                     // We are using a static data set for this example, but normally
@@ -36,8 +38,7 @@ async function bootstrap() {
                 };
             },
         });
-
-        console.log(`🚀  Server ready at: ${url}`);
+        console.log(`🚀  Server ready at: ${url} with env ${config.environment()}`);
     } catch (error) {
         console.error('App failed to start:', error)
         process.exit(1)

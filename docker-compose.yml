@@ -1,0 +1,35 @@
+services:
+  app:
+    container_name: ${PROJECT_NAME}-node-api
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - ${PORT}:9003
+    env_file:
+      - docker.env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - back-network
+
+  pg_database:
+    container_name: ${PROJECT_NAME}-pg-db
+    image: postgres:15.3-alpine3.18
+    ports:
+      - ${DATABASE_PORT}:5432
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+    networks:
+      - back-network
+
+
+networks:
+  back-network:
+    driver: bridge
+
+volumes:
+  redis-data:

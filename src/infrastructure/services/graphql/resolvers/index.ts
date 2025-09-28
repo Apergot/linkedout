@@ -4,8 +4,7 @@
 // in a single file.
 import Query from './queries'
 import Mutation from './mutations'
-import { type Resolvers } from '../__generated__/resolvers-types'
 
-const resolvers: Resolvers = { Query, Mutation }
+const resolvers = { Query, Mutation }
 
 export default resolvers

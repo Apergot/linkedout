@@ -1,6 +1,5 @@
 import { type GraphQLResolveInfo } from 'graphql'
 import { type MyContext } from '../../../../index'
-
 export type Maybe<T> = T | null
 export type InputMaybe<T> = Maybe<T>
 export type Exact<T extends Record<string, unknown>> = {
@@ -20,6 +19,9 @@ export type Incremental<T> =
   | {
       [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never
     }
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]-?: NonNullable<T[P]>
+}
 /** All built-in and custom scalars, mapped to their actual values */
 export interface Scalars {
   ID: { input: string; output: string }
@@ -29,6 +31,7 @@ export interface Scalars {
   Float: { input: number; output: number }
 }
 
+/** Standard mutation response for adding a Book. */
 export interface AddBookMutationResponse {
   __typename?: 'AddBookMutationResponse'
   book?: Maybe<Book>
@@ -37,17 +40,20 @@ export interface AddBookMutationResponse {
   success: Scalars['Boolean']['output']
 }
 
+/** Represents a book in the demo section. */
 export interface Book {
   __typename?: 'Book'
   author?: Maybe<Scalars['String']['output']>
   title?: Maybe<Scalars['String']['output']>
 }
 
+/** Represents a Company. For now, only name is exposed. */
 export interface Company {
   __typename?: 'Company'
   name?: Maybe<Scalars['String']['output']>
 }
 
+/** Response returned by createCompany mutation. */
 export interface CreateCompanyResponse {
   __typename?: 'CreateCompanyResponse'
   code: Scalars['String']['output']
@@ -56,10 +62,65 @@ export interface CreateCompanyResponse {
   success: Scalars['Boolean']['output']
 }
 
+export interface CreateJobPostInput {
+  benefitsCsv?: InputMaybe<Scalars['String']['input']>
+  companyId: Scalars['ID']['input']
+  contractType: Scalars['String']['input']
+  description: Scalars['String']['input']
+  extrasCsv?: InputMaybe<Scalars['String']['input']>
+  location: Scalars['String']['input']
+  maxSalaryAmount?: InputMaybe<Scalars['Float']['input']>
+  maxSalaryCurrency?: InputMaybe<Scalars['String']['input']>
+  minSalaryAmount?: InputMaybe<Scalars['Float']['input']>
+  minSalaryCurrency?: InputMaybe<Scalars['String']['input']>
+  title: Scalars['String']['input']
+}
+
+/** Response returned by deleteJobPost mutation. */
+export interface DeleteJobPostResponse {
+  __typename?: 'DeleteJobPostResponse'
+  code: Scalars['String']['output']
+  deleted?: Maybe<Scalars['Boolean']['output']>
+  id?: Maybe<Scalars['ID']['output']>
+  message: Scalars['String']['output']
+  success: Scalars['Boolean']['output']
+}
+
+/**
+ * Represents a job post entity.
+ * Salary fields are formatted as strings like "100 USD".
+ * Benefits and extras are stored as comma-separated strings.
+ */
+export interface JobPost {
+  __typename?: 'JobPost'
+  benefitsCsv?: Maybe<Scalars['String']['output']>
+  companyId: Scalars['ID']['output']
+  contractType: Scalars['String']['output']
+  description: Scalars['String']['output']
+  extrasCsv?: Maybe<Scalars['String']['output']>
+  id: Scalars['ID']['output']
+  location: Scalars['String']['output']
+  maxSalaryMoney?: Maybe<Scalars['String']['output']>
+  minSalaryMoney?: Maybe<Scalars['String']['output']>
+  title: Scalars['String']['output']
+}
+
+/** Response returned by JobPost create/update/get queries. */
+export interface JobPostResponse {
+  __typename?: 'JobPostResponse'
+  code: Scalars['String']['output']
+  jobPost?: Maybe<JobPost>
+  message: Scalars['String']['output']
+  success: Scalars['Boolean']['output']
+}
+
 export interface Mutation {
   __typename?: 'Mutation'
   addBook?: Maybe<AddBookMutationResponse>
   createCompany?: Maybe<CreateCompanyResponse>
+  createJobPost?: Maybe<JobPostResponse>
+  deleteJobPost?: Maybe<DeleteJobPostResponse>
+  updateJobPost?: Maybe<JobPostResponse>
 }
 
 export interface MutationAddBookArgs {
@@ -71,9 +132,41 @@ export interface MutationCreateCompanyArgs {
   name?: InputMaybe<Scalars['String']['input']>
 }
 
+export interface MutationCreateJobPostArgs {
+  input: CreateJobPostInput
+}
+
+export interface MutationDeleteJobPostArgs {
+  id: Scalars['ID']['input']
+}
+
+export interface MutationUpdateJobPostArgs {
+  input: UpdateJobPostInput
+}
+
 export interface Query {
   __typename?: 'Query'
   books?: Maybe<Array<Maybe<Book>>>
+  jobPost?: Maybe<JobPostResponse>
+}
+
+export interface QueryJobPostArgs {
+  id: Scalars['ID']['input']
+}
+
+export interface UpdateJobPostInput {
+  benefitsCsv?: InputMaybe<Scalars['String']['input']>
+  companyId: Scalars['ID']['input']
+  contractType: Scalars['String']['input']
+  description: Scalars['String']['input']
+  extrasCsv?: InputMaybe<Scalars['String']['input']>
+  id: Scalars['ID']['input']
+  location: Scalars['String']['input']
+  maxSalaryAmount?: InputMaybe<Scalars['Float']['input']>
+  maxSalaryCurrency?: InputMaybe<Scalars['String']['input']>
+  minSalaryAmount?: InputMaybe<Scalars['Float']['input']>
+  minSalaryCurrency?: InputMaybe<Scalars['String']['input']>
+  title: Scalars['String']['input']
 }
 
 export type WithIndex<TObject> = TObject & Record<string, any>
@@ -203,9 +296,16 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>
   Company: ResolverTypeWrapper<Company>
   CreateCompanyResponse: ResolverTypeWrapper<CreateCompanyResponse>
+  CreateJobPostInput: CreateJobPostInput
+  DeleteJobPostResponse: ResolverTypeWrapper<DeleteJobPostResponse>
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>
+  JobPost: ResolverTypeWrapper<JobPost>
+  JobPostResponse: ResolverTypeWrapper<JobPostResponse>
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>
   String: ResolverTypeWrapper<Scalars['String']['output']>
+  UpdateJobPostInput: UpdateJobPostInput
 }>
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -215,9 +315,16 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean']['output']
   Company: Company
   CreateCompanyResponse: CreateCompanyResponse
+  CreateJobPostInput: CreateJobPostInput
+  DeleteJobPostResponse: DeleteJobPostResponse
+  Float: Scalars['Float']['output']
+  ID: Scalars['ID']['output']
+  JobPost: JobPost
+  JobPostResponse: JobPostResponse
   Mutation: Record<PropertyKey, never>
   Query: Record<PropertyKey, never>
   String: Scalars['String']['output']
+  UpdateJobPostInput: UpdateJobPostInput
 }>
 
 export type AddBookMutationResponseResolvers<
@@ -259,6 +366,58 @@ export type CreateCompanyResponseResolvers<
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
 }>
 
+export type DeleteJobPostResponseResolvers<
+  ContextType = MyContext,
+  ParentType extends
+    ResolversParentTypes['DeleteJobPostResponse'] = ResolversParentTypes['DeleteJobPostResponse'],
+> = ResolversObject<{
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  deleted?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+}>
+
+export type JobPostResolvers<
+  ContextType = MyContext,
+  ParentType extends
+    ResolversParentTypes['JobPost'] = ResolversParentTypes['JobPost'],
+> = ResolversObject<{
+  benefitsCsv?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  companyId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  contractType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  extrasCsv?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  location?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  maxSalaryMoney?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  minSalaryMoney?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+}>
+
+export type JobPostResponseResolvers<
+  ContextType = MyContext,
+  ParentType extends
+    ResolversParentTypes['JobPostResponse'] = ResolversParentTypes['JobPostResponse'],
+> = ResolversObject<{
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  jobPost?: Resolver<Maybe<ResolversTypes['JobPost']>, ParentType, ContextType>
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+}>
+
 export type MutationResolvers<
   ContextType = MyContext,
   ParentType extends
@@ -276,6 +435,24 @@ export type MutationResolvers<
     ContextType,
     Partial<MutationCreateCompanyArgs>
   >
+  createJobPost?: Resolver<
+    Maybe<ResolversTypes['JobPostResponse']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateJobPostArgs, 'input'>
+  >
+  deleteJobPost?: Resolver<
+    Maybe<ResolversTypes['DeleteJobPostResponse']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteJobPostArgs, 'id'>
+  >
+  updateJobPost?: Resolver<
+    Maybe<ResolversTypes['JobPostResponse']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateJobPostArgs, 'input'>
+  >
 }>
 
 export type QueryResolvers<
@@ -288,6 +465,12 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >
+  jobPost?: Resolver<
+    Maybe<ResolversTypes['JobPostResponse']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryJobPostArgs, 'id'>
+  >
 }>
 
 export type Resolvers<ContextType = MyContext> = ResolversObject<{
@@ -295,6 +478,9 @@ export type Resolvers<ContextType = MyContext> = ResolversObject<{
   Book?: BookResolvers<ContextType>
   Company?: CompanyResolvers<ContextType>
   CreateCompanyResponse?: CreateCompanyResponseResolvers<ContextType>
+  DeleteJobPostResponse?: DeleteJobPostResponseResolvers<ContextType>
+  JobPost?: JobPostResolvers<ContextType>
+  JobPostResponse?: JobPostResponseResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
 }>

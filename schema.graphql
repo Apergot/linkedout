@@ -1,5 +1,6 @@
 type Query {
     books: [Book]
+    jobPost(id: ID!): JobPostResponse
 }
 
 type Company {
@@ -9,6 +10,19 @@ type Company {
 type Book {
     title: String
     author: String
+}
+
+type JobPost {
+    id: ID!
+    companyId: ID!
+    title: String!
+    location: String!
+    description: String!
+    contractType: String!
+    minSalaryMoney: String
+    maxSalaryMoney: String
+    benefitsCsv: String
+    extrasCsv: String
 }
 
 type AddBookMutationResponse {
@@ -25,7 +39,54 @@ type CreateCompanyResponse {
     company: Company
 }
 
-type Mutation {
+type JobPostResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    jobPost: JobPost
+}
+
+type DeleteJobPostResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    id: ID
+    deleted: Boolean
+}
+
+input CreateJobPostInput {
+    companyId: ID!
+    title: String!
+    location: String!
+    description: String!
+    contractType: String!
+    minSalaryAmount: Float
+    minSalaryCurrency: String
+    maxSalaryAmount: Float
+    maxSalaryCurrency: String
+    benefitsCsv: String
+    extrasCsv: String
+}
+
+input UpdateJobPostInput {
+    id: ID!
+    companyId: ID!
+    title: String!
+    location: String!
+    description: String!
+    contractType: String!
+    minSalaryAmount: Float
+    minSalaryCurrency: String
+    maxSalaryAmount: Float
+    maxSalaryCurrency: String
+    benefitsCsv: String
+    extrasCsv: String
+}
+
+ type Mutation {
     addBook(title: String, author: String): AddBookMutationResponse
     createCompany(name: String): CreateCompanyResponse
+    createJobPost(input: CreateJobPostInput!): JobPostResponse
+    updateJobPost(input: UpdateJobPostInput!): JobPostResponse
+    deleteJobPost(id: ID!): DeleteJobPostResponse
 }

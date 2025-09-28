@@ -3,8 +3,8 @@ import { type Name } from '../valueObjects/name'
 
 export class Company {
   constructor(
-    private readonly id: Id,
-    private readonly name: Name
+    public readonly id: Id,
+    public readonly name: Name
   ) {}
 
   isMatchingName(name: Name) {

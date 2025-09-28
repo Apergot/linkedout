@@ -8,6 +8,7 @@ import resolvers from './services/graphql/resolvers'
 export class Factory {
   private static companyRepository: CompanyRepository
   private static apolloServer: ApolloServer | null
+  private static companyService: CompanyService | null
 
   private static getCompanyRepository() {
     if (this.companyRepository == null) {
@@ -17,8 +18,11 @@ export class Factory {
     return this.companyRepository
   }
 
-  private static createCompanyService() {
-    return new CompanyService(this.getCompanyRepository())
+  static getCompanyService(): CompanyService {
+    if (this.companyService == null) {
+      this.companyService = new CompanyService(this.getCompanyRepository())
+    }
+    return this.companyService
   }
 
   static getApolloServer(): ApolloServer {

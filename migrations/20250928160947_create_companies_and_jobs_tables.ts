@@ -19,7 +19,9 @@ export async function up(knex: Knex): Promise<void> {
     table.string('title').notNullable()
     table.string('location').notNullable()
     table.text('description').notNullable()
-    table.enu('contract_type', ['FULL_TIME', 'PART_TIME', 'CONTRACT'])
+    table
+      .enu('contract_type', ['FULL_TIME', 'PART_TIME', 'CONTRACT'])
+      .notNullable()
     table.string('min_salary_money').nullable()
     table.string('max_salary_money').nullable()
     table.specificType('benefits', 'text[]').nullable()
@@ -29,6 +31,6 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
+  await knex.schema.dropTable('job_posts')
   await knex.schema.dropTable('companies')
-  await knex.schema.dropTable('jobs')
 }

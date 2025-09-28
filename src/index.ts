@@ -7,6 +7,10 @@ export interface MyContext {
   dataSources: {
     booksAPI: BooksDataSource
   }
+  authUser?: {
+    id: string
+    email: string
+  } | null
 }
 
 async function bootstrap() {
@@ -19,14 +23,28 @@ async function bootstrap() {
     //  3. prepares your app to handle incoming requests
     const { url } = await startStandaloneServer(server, {
       listen: { port: config.port(), host: '0.0.0.0' },
-      context: async () => {
+      context: async ({ req }) => {
+        let authUser: { id: string; email: string } | null = null
+        try {
+          const auth = req.headers.authorization || req.headers.Authorization
+          if (typeof auth === 'string' && auth.startsWith('Bearer ')) {
+            const token = auth.slice('Bearer '.length).trim()
+            const jwt = await import('jsonwebtoken')
+            const decoded = jwt.verify(token, config.jwtSecret())
+            if (decoded && typeof decoded === 'object') {
+              const userId = (decoded as any).userId as string | undefined
+              const email = (decoded as any).email as string | undefined
+              if (userId && email) authUser = { id: userId, email }
+            }
+          }
+        } catch (_) {
+          authUser = null
+        }
         return {
-          // We are using a static data set for this example, but normally
-          // this would be where you'd add your data source connections
-          // or your REST API classes.
           dataSources: {
             booksAPI: new BooksDataSource(),
           },
+          authUser,
         }
       },
     })

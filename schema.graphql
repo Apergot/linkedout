@@ -83,9 +83,33 @@ input UpdateJobPostInput {
     extrasCsv: String
 }
 
+type User {
+    id: ID!
+    email: String!
+    companyId: ID
+}
+
+type AuthResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    token: String
+    user: User
+}
+
+type UserResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    user: User
+}
+
  type Mutation {
     addBook(title: String, author: String): AddBookMutationResponse
     createCompany(name: String): CreateCompanyResponse
+    signup(email: String!, password: String!): AuthResponse
+    login(email: String!, password: String!): AuthResponse
+    setMyCompany(companyId: ID!): UserResponse
     createJobPost(input: CreateJobPostInput!): JobPostResponse
     updateJobPost(input: UpdateJobPostInput!): JobPostResponse
     deleteJobPost(id: ID!): DeleteJobPostResponse

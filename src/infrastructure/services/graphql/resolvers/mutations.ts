@@ -2,6 +2,84 @@
 import { Factory } from '../../../factory'
 
 const mutations = {
+  // auth
+  signup: async (_, { email, password }) => {
+    try {
+      const service = Factory.getUserService()
+      const action = await service.signup()
+      const result = await action({ email, password })
+      return {
+        code: '200',
+        success: true,
+        message: 'Signup successful',
+        token: result.token,
+        user: { id: result.id, email: result.email, companyId: null },
+      }
+    } catch (err: any) {
+      const isValidation = err?.name === 'ValidationError'
+      return {
+        code: isValidation ? '400' : '500',
+        success: false,
+        message: err?.message ?? 'Unexpected error while signing up',
+        token: null,
+        user: null,
+      }
+    }
+  },
+  login: async (_, { email, password }) => {
+    try {
+      const service = Factory.getUserService()
+      const action = await service.login()
+      const result = await action({ email, password })
+      return {
+        code: '200',
+        success: true,
+        message: 'Login successful',
+        token: result.token,
+        user: { id: result.id, email: result.email, companyId: null },
+      }
+    } catch (err: any) {
+      const isUnauthorized = err?.name === 'UnauthorizedError'
+      return {
+        code: isUnauthorized ? '401' : '500',
+        success: false,
+        message: err?.message ?? 'Unexpected error while logging in',
+        token: null,
+        user: null,
+      }
+    }
+  },
+  setMyCompany: async (_, { companyId }, ctx) => {
+    try {
+      const service = Factory.getUserService()
+      const action = await service.setMyCompany()
+      const result = await action({ userId: ctx.authUser.id, companyId })
+      return {
+        code: '200',
+        success: true,
+        message: 'Company assigned to user',
+        user: {
+          id: result.id,
+          email: result.email,
+          companyId: result.companyId,
+        },
+      }
+    } catch (err: any) {
+      const name = err?.name
+      const code =
+        name === 'ValidationError'
+          ? '400'
+          : name === 'NotFoundError'
+            ? '404'
+            : '500'
+      return {
+        code,
+        success: false,
+        message: err?.message ?? 'Unexpected error',
+        user: null,
+      }
+    }
+  },
   // Below, we mock adding a new book. Our data set is static for this
   // example, so we won't actually modify our data.
   addBook: async (_, { title, author }, { dataSources }) => {
@@ -31,8 +109,16 @@ const mutations = {
       }
     }
   },
-  createJobPost: async (_, { input }) => {
+  createJobPost: async (_, { input }, ctx) => {
     try {
+      if (!ctx?.authUser) {
+        return {
+          code: '401',
+          success: false,
+          message: 'Unauthorized',
+          jobPost: null,
+        }
+      }
       const service = Factory.getJobPostService()
       const action = await service.create()
       const result = await action({
@@ -76,8 +162,16 @@ const mutations = {
       }
     }
   },
-  updateJobPost: async (_, { input }) => {
+  updateJobPost: async (_, { input }, ctx) => {
     try {
+      if (!ctx?.authUser) {
+        return {
+          code: '401',
+          success: false,
+          message: 'Unauthorized',
+          jobPost: null,
+        }
+      }
       const service = Factory.getJobPostService()
       const action = await service.update()
       const result = await action({
@@ -128,8 +222,17 @@ const mutations = {
       }
     }
   },
-  deleteJobPost: async (_, { id }) => {
+  deleteJobPost: async (_, { id }, ctx) => {
     try {
+      if (!ctx?.authUser) {
+        return {
+          code: '401',
+          success: false,
+          message: 'Unauthorized',
+          id: id ?? null,
+          deleted: false,
+        }
+      }
       const service = Factory.getJobPostService()
       const action = await service.delete()
       const result = await action({ id })

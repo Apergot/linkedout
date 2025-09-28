@@ -1,5 +1,6 @@
 import { type GraphQLResolveInfo } from 'graphql'
-import { type MyContext } from '../index'
+import { type MyContext } from '../../../../index'
+
 export type Maybe<T> = T | null
 export type InputMaybe<T> = Maybe<T>
 export type Exact<T extends Record<string, unknown>> = {
@@ -42,14 +43,32 @@ export interface Book {
   title?: Maybe<Scalars['String']['output']>
 }
 
+export interface Company {
+  __typename?: 'Company'
+  name?: Maybe<Scalars['String']['output']>
+}
+
+export interface CreateCompanyResponse {
+  __typename?: 'CreateCompanyResponse'
+  code: Scalars['String']['output']
+  company?: Maybe<Company>
+  message: Scalars['String']['output']
+  success: Scalars['Boolean']['output']
+}
+
 export interface Mutation {
   __typename?: 'Mutation'
   addBook?: Maybe<AddBookMutationResponse>
+  createCompany?: Maybe<CreateCompanyResponse>
 }
 
 export interface MutationAddBookArgs {
   author?: InputMaybe<Scalars['String']['input']>
   title?: InputMaybe<Scalars['String']['input']>
+}
+
+export interface MutationCreateCompanyArgs {
+  name?: InputMaybe<Scalars['String']['input']>
 }
 
 export interface Query {
@@ -182,6 +201,8 @@ export type ResolversTypes = ResolversObject<{
   AddBookMutationResponse: ResolverTypeWrapper<AddBookMutationResponse>
   Book: ResolverTypeWrapper<Book>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>
+  Company: ResolverTypeWrapper<Company>
+  CreateCompanyResponse: ResolverTypeWrapper<CreateCompanyResponse>
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>
   String: ResolverTypeWrapper<Scalars['String']['output']>
@@ -192,6 +213,8 @@ export type ResolversParentTypes = ResolversObject<{
   AddBookMutationResponse: AddBookMutationResponse
   Book: Book
   Boolean: Scalars['Boolean']['output']
+  Company: Company
+  CreateCompanyResponse: CreateCompanyResponse
   Mutation: Record<PropertyKey, never>
   Query: Record<PropertyKey, never>
   String: Scalars['String']['output']
@@ -217,6 +240,25 @@ export type BookResolvers<
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }>
 
+export type CompanyResolvers<
+  ContextType = MyContext,
+  ParentType extends
+    ResolversParentTypes['Company'] = ResolversParentTypes['Company'],
+> = ResolversObject<{
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+}>
+
+export type CreateCompanyResponseResolvers<
+  ContextType = MyContext,
+  ParentType extends
+    ResolversParentTypes['CreateCompanyResponse'] = ResolversParentTypes['CreateCompanyResponse'],
+> = ResolversObject<{
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  company?: Resolver<Maybe<ResolversTypes['Company']>, ParentType, ContextType>
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+}>
+
 export type MutationResolvers<
   ContextType = MyContext,
   ParentType extends
@@ -227,6 +269,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     Partial<MutationAddBookArgs>
+  >
+  createCompany?: Resolver<
+    Maybe<ResolversTypes['CreateCompanyResponse']>,
+    ParentType,
+    ContextType,
+    Partial<MutationCreateCompanyArgs>
   >
 }>
 
@@ -245,6 +293,8 @@ export type QueryResolvers<
 export type Resolvers<ContextType = MyContext> = ResolversObject<{
   AddBookMutationResponse?: AddBookMutationResponseResolvers<ContextType>
   Book?: BookResolvers<ContextType>
+  Company?: CompanyResolvers<ContextType>
+  CreateCompanyResponse?: CreateCompanyResponseResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
 }>

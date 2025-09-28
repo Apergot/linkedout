@@ -1,11 +1,12 @@
 // Use our automatically generated Book and AddBookMutationResponse types
 // for type safety in our data source class
+
+import { withPgClient } from '../../queries/pgQueryExecutor'
+import { type QueryConfig } from 'pg'
 import {
   type AddBookMutationResponse,
   type Book,
 } from './__generated__/resolvers-types'
-import { withPgClient } from './infrastructure/queries/pgQueryExecutor'
-import { type QueryConfig } from 'pg'
 
 export class BooksDataSource {
   async getBooks(): Promise<Book[]> {

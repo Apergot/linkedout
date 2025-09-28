@@ -30,27 +30,13 @@ export type Book = {
   title?: Maybe<Scalars['String']['output']>;
 };
 
-export type DeleteBookMutationResponse = {
-  __typename?: 'DeleteBookMutationResponse';
-  code: Scalars['String']['output'];
-  message: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   addBook?: Maybe<AddBookMutationResponse>;
-  deleteBook?: Maybe<DeleteBookMutationResponse>;
 };
 
 
 export type MutationAddBookArgs = {
-  author?: InputMaybe<Scalars['String']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationDeleteBookArgs = {
   author?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
 };
@@ -137,7 +123,6 @@ export type ResolversTypes = ResolversObject<{
   AddBookMutationResponse: ResolverTypeWrapper<AddBookMutationResponse>;
   Book: ResolverTypeWrapper<Book>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
-  DeleteBookMutationResponse: ResolverTypeWrapper<DeleteBookMutationResponse>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -148,7 +133,6 @@ export type ResolversParentTypes = ResolversObject<{
   AddBookMutationResponse: AddBookMutationResponse;
   Book: Book;
   Boolean: Scalars['Boolean']['output'];
-  DeleteBookMutationResponse: DeleteBookMutationResponse;
   Mutation: Record<PropertyKey, never>;
   Query: Record<PropertyKey, never>;
   String: Scalars['String']['output'];
@@ -166,15 +150,8 @@ export type BookResolvers<ContextType = MyContext, ParentType extends ResolversP
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 }>;
 
-export type DeleteBookMutationResponseResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['DeleteBookMutationResponse'] = ResolversParentTypes['DeleteBookMutationResponse']> = ResolversObject<{
-  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-}>;
-
 export type MutationResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   addBook?: Resolver<Maybe<ResolversTypes['AddBookMutationResponse']>, ParentType, ContextType, Partial<MutationAddBookArgs>>;
-  deleteBook?: Resolver<Maybe<ResolversTypes['DeleteBookMutationResponse']>, ParentType, ContextType, Partial<MutationDeleteBookArgs>>;
 }>;
 
 export type QueryResolvers<ContextType = MyContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -184,7 +161,6 @@ export type QueryResolvers<ContextType = MyContext, ParentType extends Resolvers
 export type Resolvers<ContextType = MyContext> = ResolversObject<{
   AddBookMutationResponse?: AddBookMutationResponseResolvers<ContextType>;
   Book?: BookResolvers<ContextType>;
-  DeleteBookMutationResponse?: DeleteBookMutationResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;

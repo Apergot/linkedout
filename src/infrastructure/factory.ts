@@ -8,13 +8,18 @@ import { readFileSync } from 'node:fs'
 import { ApolloServer } from '@apollo/server'
 import resolvers from './services/graphql/resolvers'
 import type { MyContext } from '../index'
+import { type UserRepository } from '../core/repositories/userRepository'
+import { PostgresUserRepository } from './queries/pgUserRepository'
+import { UserService } from '../application/services/userService'
 
 export class Factory {
   private static companyRepository: CompanyRepository
   private static jobPostRepository: JobPostRepository
+  private static userRepository: UserRepository
   private static apolloServer: ApolloServer<MyContext> | null
   private static companyService: CompanyService | null
   private static jobPostService: JobPostService | null
+  private static userService: UserService | null
 
   private static getCompanyRepository() {
     if (this.companyRepository == null) {
@@ -31,6 +36,13 @@ export class Factory {
     return this.jobPostRepository
   }
 
+  private static getUserRepository() {
+    if (this.userRepository == null) {
+      this.userRepository = new PostgresUserRepository()
+    }
+    return this.userRepository
+  }
+
   static getCompanyService(): CompanyService {
     if (this.companyService == null) {
       this.companyService = new CompanyService(this.getCompanyRepository())
@@ -43,6 +55,13 @@ export class Factory {
       this.jobPostService = new JobPostService(this.getJobPostRepository())
     }
     return this.jobPostService
+  }
+
+  static getUserService(): UserService {
+    if (this.userService == null) {
+      this.userService = new UserService(this.getUserRepository())
+    }
+    return this.userService
   }
 
   static getApolloServer(): ApolloServer<MyContext> {

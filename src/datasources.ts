@@ -4,7 +4,7 @@ import {
   type AddBookMutationResponse,
   type Book,
 } from './__generated__/resolvers-types'
-import { withPgClient } from './pgQueryExecutor'
+import { withPgClient } from './infrastructure/queries/pgQueryExecutor'
 import { type QueryConfig } from 'pg'
 
 export class BooksDataSource {

@@ -1,4 +1,4 @@
-import pool from './pg'
+import pool from '../services/pg'
 
 type PgQueryExecutor<T> = (client: any) => Promise<T>
 

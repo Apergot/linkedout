@@ -1,9 +1,7 @@
-import { readFileSync } from 'node:fs'
-import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
-import { BooksDataSource } from './datasources'
-import resolvers from './resolvers'
+import { BooksDataSource } from './infrastructure/services/graphql/datasources'
 import config from './config'
+import { Factory } from './infrastructure/factory'
 
 export interface MyContext {
   dataSources: {
@@ -13,13 +11,7 @@ export interface MyContext {
 
 async function bootstrap() {
   try {
-    const typeDefs = readFileSync('./schema.graphql', { encoding: 'utf-8' })
-    // The ApolloServer constructor requires two parameters: your schema
-    // definition and your set of resolvers.
-    const server = new ApolloServer<MyContext>({
-      typeDefs,
-      resolvers,
-    })
+    const server = Factory.getApolloServer()
 
     // Passing an ApolloServer instance to the `startStandaloneServer` function:
     //  1. creates an Express app

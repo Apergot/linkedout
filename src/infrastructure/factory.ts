@@ -7,10 +7,10 @@ import { PostgresJobPostRepository } from './queries/pgJobPostRepository'
 import { readFileSync } from 'node:fs'
 import { ApolloServer } from '@apollo/server'
 import resolvers from './services/graphql/resolvers'
-import type { MyContext } from '../index'
 import { type UserRepository } from '../core/repositories/userRepository'
 import { PostgresUserRepository } from './queries/pgUserRepository'
 import { UserService } from '../application/services/userService'
+import { type MyContext } from './services/graphql/contextBuilder'
 
 export class Factory {
   private static companyRepository: CompanyRepository

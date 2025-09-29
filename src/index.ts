@@ -1,67 +1,15 @@
 import { startStandaloneServer } from '@apollo/server/standalone'
-import { BooksDataSource } from './infrastructure/services/graphql/datasources'
 import config from './config'
+import { contextBuilder } from './infrastructure/services/graphql/contextBuilder'
 import { Factory } from './infrastructure/factory'
-
-export interface MyContext {
-  dataSources: {
-    booksAPI: BooksDataSource
-  }
-  authUser?: {
-    id: string
-    email: string
-  } | null
-  apiTokenAuth?: boolean
-}
 
 async function bootstrap() {
   try {
     const server = Factory.getApolloServer()
-
-    // Passing an ApolloServer instance to the `startStandaloneServer` function:
-    //  1. creates an Express app
-    //  2. install your ApolloServer instance as middleware
-    //  3. prepares your app to handle incoming requests
-    const { url } = await startStandaloneServer(server, {
+    await startStandaloneServer(server, {
       listen: { port: config.port(), host: '0.0.0.0' },
-      context: async ({ req }) => {
-        let authUser: { id: string; email: string } | null = null
-        let apiTokenAuth = false
-        try {
-          const auth = (req.headers.authorization ||
-            req.headers.Authorization) as string | undefined
-          if (typeof auth === 'string' && auth.startsWith('Bearer ')) {
-            const token = auth.slice('Bearer '.length).trim()
-            const jwt = await import('jsonwebtoken')
-            const decoded = jwt.verify(token, config.jwtSecret())
-            if (decoded && typeof decoded === 'object') {
-              const userId = (decoded as any).userId as string | undefined
-              const email = (decoded as any).email as string | undefined
-              if (userId && email) authUser = { id: userId, email }
-            }
-          }
-        } catch (_) {
-          authUser = null
-        }
-        try {
-          const apiKey = (req.headers['x-api-key'] ||
-            req.headers['X-API-KEY']) as string | undefined
-          if (apiKey && apiKey === config.apiToken()) {
-            apiTokenAuth = true
-          }
-        } catch (_) {
-          apiTokenAuth = false
-        }
-        return {
-          dataSources: {
-            booksAPI: new BooksDataSource(),
-          },
-          authUser,
-          apiTokenAuth,
-        }
-      },
+      context: contextBuilder,
     })
-    console.log(`🚀  Server ready at: ${url} with env ${config.environment()}`)
   } catch (error) {
     console.error('App failed to start:', error)
     process.exit(1)

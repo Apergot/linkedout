@@ -1,16 +1,20 @@
 type Query {
-    books: [Book]
     jobPost(id: ID!): JobPostResponse
     jobPosts(filter: JobPostSearchFilter, limit: Int, offset: Int): JobPostsResponse
 }
 
-type Company {
-    name: String
+type Mutation {
+    createCompany(name: String): CreateCompanyResponse
+    signup(email: String!, password: String!): AuthResponse
+    login(email: String!, password: String!): AuthResponse
+    setUserCompany(userId: ID!, companyId: ID!): UserResponse
+    createJobPost(input: CreateJobPostInput!): JobPostResponse
+    updateJobPost(input: UpdateJobPostInput!): JobPostResponse
+    deleteJobPost(id: ID!): DeleteJobPostResponse
 }
 
-type Book {
-    title: String
-    author: String
+type Company {
+    name: String
 }
 
 type JobPost {
@@ -24,13 +28,6 @@ type JobPost {
     maxSalaryMoney: String
     benefitsCsv: String
     extrasCsv: String
-}
-
-type AddBookMutationResponse {
-    code: String!
-    success: Boolean!
-    message: String!
-    book: Book
 }
 
 type CreateCompanyResponse {
@@ -117,15 +114,4 @@ type UserResponse {
     success: Boolean!
     message: String!
     user: User
-}
-
- type Mutation {
-    addBook(title: String, author: String): AddBookMutationResponse
-    createCompany(name: String): CreateCompanyResponse
-    signup(email: String!, password: String!): AuthResponse
-    login(email: String!, password: String!): AuthResponse
-    setUserCompany(userId: ID!, companyId: ID!): UserResponse
-    createJobPost(input: CreateJobPostInput!): JobPostResponse
-    updateJobPost(input: UpdateJobPostInput!): JobPostResponse
-    deleteJobPost(id: ID!): DeleteJobPostResponse
 }

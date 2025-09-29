@@ -6,6 +6,19 @@ import { type JobDescription } from '../valueObjects/jobPost/jobDescription'
 import { type ContractType } from '../valueObjects/jobPost/contractType'
 import { ValidationError } from '../common/error'
 
+export interface JobPostDTO {
+  id: string
+  companyId: string
+  title: string
+  location: string
+  description: string
+  contractType: string
+  minSalaryMoney?: string | null
+  maxSalaryMoney?: string | null
+  benefitsCsv?: string | null
+  extrasCsv?: string | null
+}
+
 export class JobPost {
   constructor(
     public readonly id: Id,
@@ -46,5 +59,20 @@ export class JobPost {
       .split(',')
       .map((s) => s.trim())
       .filter((s) => s.length > 0)
+  }
+
+  toDto(): JobPostDTO {
+    return {
+      id: this.id.toString(),
+      companyId: this.companyId.toString(),
+      title: this.title.toString(),
+      location: this.location.toString(),
+      description: this.description.toString(),
+      contractType: this.contractType.toString(),
+      minSalaryMoney: this.minSalary?.toString() ?? null,
+      maxSalaryMoney: this.maxSalary?.toString() ?? null,
+      benefitsCsv: this.benefitsCsv ?? null,
+      extrasCsv: this.extrasCsv ?? null,
+    }
   }
 }

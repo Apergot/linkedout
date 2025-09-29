@@ -3,6 +3,7 @@ import { CreateJobPostAction } from '../actions/jobPost/createJobPost'
 import { GetJobPostByIdAction } from '../actions/jobPost/getJobPostById'
 import { UpdateJobPostAction } from '../actions/jobPost/updateJobPost'
 import { DeleteJobPostAction } from '../actions/jobPost/deleteJobPost'
+import { SearchJobPostsAction } from '../actions/jobPost/searchJobPosts'
 
 export class JobPostService {
   constructor(private readonly jobPostRepository: JobPostRepository) {}
@@ -21,5 +22,9 @@ export class JobPostService {
 
   async delete() {
     return DeleteJobPostAction(this.jobPostRepository)
+  }
+
+  async search() {
+    return SearchJobPostsAction(this.jobPostRepository)
   }
 }

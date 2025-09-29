@@ -46,6 +46,46 @@ const queries = {
       }
     }
   },
+  jobPosts: async (_, { filter, limit, offset }) => {
+    try {
+      const service = Factory.getJobPostService()
+      const action = await service.search()
+      const result = await action({
+        title: filter?.title ?? null,
+        location: filter?.location ?? null,
+        minSalaryAmount: filter?.minSalaryAmount ?? null,
+        maxSalaryAmount: filter?.maxSalaryAmount ?? null,
+        limit: limit ?? null,
+        offset: offset ?? null,
+      })
+      return {
+        code: '200',
+        success: true,
+        message: 'Job posts fetched',
+        items: result.items.map((jp) => ({
+          id: jp.id,
+          companyId: jp.companyId,
+          title: jp.title,
+          location: jp.location,
+          description: jp.description,
+          contractType: jp.contractType,
+          minSalaryMoney: jp.minSalaryMoney ?? null,
+          maxSalaryMoney: jp.maxSalaryMoney ?? null,
+          benefitsCsv: jp.benefitsCsv ?? null,
+          extrasCsv: jp.extrasCsv ?? null,
+        })),
+      }
+    } catch (err: any) {
+      const message =
+        err?.message ?? 'Unexpected error while searching job posts'
+      return {
+        code: '500',
+        success: false,
+        message,
+        items: [],
+      }
+    }
+  },
 }
 
 export default queries

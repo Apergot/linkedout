@@ -1,6 +1,7 @@
 type Query {
     books: [Book]
     jobPost(id: ID!): JobPostResponse
+    jobPosts(filter: JobPostSearchFilter, limit: Int, offset: Int): JobPostsResponse
 }
 
 type Company {
@@ -44,6 +45,20 @@ type JobPostResponse {
     success: Boolean!
     message: String!
     jobPost: JobPost
+}
+
+type JobPostsResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    items: [JobPost!]
+}
+
+input JobPostSearchFilter {
+    title: String
+    location: String
+    minSalaryAmount: Float
+    maxSalaryAmount: Float
 }
 
 type DeleteJobPostResponse {

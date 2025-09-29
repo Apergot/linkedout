@@ -2,6 +2,7 @@ import { type UserRepository } from '../../core/repositories/userRepository'
 import { SignupUserAction } from '../actions/user/signupUser'
 import { LoginUserAction } from '../actions/user/loginUser'
 import { SetUserCompanyAction } from '../actions/user/setUserCompany'
+import { GetUserByIdAction } from '../actions/user/getUserById'
 
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
@@ -16,5 +17,9 @@ export class UserService {
 
   async setUserCompany() {
     return SetUserCompanyAction(this.userRepository)
+  }
+
+  async getById() {
+    return GetUserByIdAction(this.userRepository)
   }
 }

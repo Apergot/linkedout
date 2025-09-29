@@ -11,6 +11,20 @@ const jobPostMutations = {
           jobPost: null,
         }
       }
+
+      const userService = Factory.getUserService()
+      const getUser = await userService.getById()
+      const currentUser = await getUser({ id: ctx.authUser.id })
+      if (!currentUser.companyId || currentUser.companyId !== input.companyId) {
+        return {
+          code: '403',
+          success: false,
+          message:
+            'Forbidden: you can only create job posts for your own company',
+          jobPost: null,
+        }
+      }
+
       const service = Factory.getJobPostService()
       const action = await service.create()
       const result = await action({
@@ -64,8 +78,33 @@ const jobPostMutations = {
           jobPost: null,
         }
       }
-      const service = Factory.getJobPostService()
-      const action = await service.update()
+
+      const userService = Factory.getUserService()
+      const getUser = await userService.getById()
+      const currentUser = await getUser({ id: ctx.authUser.id })
+      if (!currentUser.companyId || currentUser.companyId !== input.companyId) {
+        return {
+          code: '403',
+          success: false,
+          message:
+            'Forbidden: you can only update job posts for your own company',
+          jobPost: null,
+        }
+      }
+
+      const jobService = Factory.getJobPostService()
+      const getJob = await jobService.getById()
+      const existing = await getJob({ id: input.id })
+      if (existing.companyId !== currentUser.companyId) {
+        return {
+          code: '403',
+          success: false,
+          message: 'Forbidden: cannot update a job post from another company',
+          jobPost: null,
+        }
+      }
+
+      const action = await jobService.update()
       const result = await action({
         id: input.id,
         companyId: input.companyId,
@@ -125,8 +164,28 @@ const jobPostMutations = {
           deleted: false,
         }
       }
-      const service = Factory.getJobPostService()
-      const action = await service.delete()
+
+      const userService = Factory.getUserService()
+      const getUser = await userService.getById()
+      const currentUser = await getUser({ id: ctx.authUser.id })
+
+      const jobService = Factory.getJobPostService()
+      const getJob = await jobService.getById()
+      const existing = await getJob({ id })
+      if (
+        !currentUser.companyId ||
+        existing.companyId !== currentUser.companyId
+      ) {
+        return {
+          code: '403',
+          success: false,
+          message: 'Forbidden: cannot delete a job post from another company',
+          id: id ?? null,
+          deleted: false,
+        }
+      }
+
+      const action = await jobService.delete()
       const result = await action({ id })
       return {
         code: result.deleted ? '200' : '500',

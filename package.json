@@ -8,7 +8,8 @@
     "generate": "graphql-codegen --config codegen.yml",
     "compile": "npm run generate && tsc",
     "start": "npm run compile && node ./dist/index.js",
-    "start:dev": "ts-node-dev src/index.ts"
+    "start:dev": "ts-node-dev src/index.ts",
+    "test:unit": "jest --testMatch='**/src/tests/unit/**/*.test.*'"
   },
   "keywords": [],
   "author": "",

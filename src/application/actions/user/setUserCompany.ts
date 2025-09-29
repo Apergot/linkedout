@@ -2,19 +2,21 @@ import { type UserRepository } from '../../../core/repositories/userRepository'
 import { Id } from '../../../core/valueObjects/id'
 import { NotFoundError } from '../../../core/common/error'
 
-export interface SetMyCompanyRequest {
+export interface SetUserCompanyRequest {
   userId: string
   companyId: string
 }
 
-export interface SetMyCompanyResponse {
+export interface SetUserCompanyResponse {
   id: string
   email: string
   companyId: string
 }
 
-export function SetMyCompanyAction(userRepo: UserRepository) {
-  return async (req: SetMyCompanyRequest): Promise<SetMyCompanyResponse> => {
+export function SetUserCompanyAction(userRepo: UserRepository) {
+  return async (
+    req: SetUserCompanyRequest
+  ): Promise<SetUserCompanyResponse> => {
     const userId = Id.createFrom(req.userId)
     const companyId = Id.createFrom(req.companyId)
 

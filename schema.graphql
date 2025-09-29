@@ -124,7 +124,7 @@ type UserResponse {
     createCompany(name: String): CreateCompanyResponse
     signup(email: String!, password: String!): AuthResponse
     login(email: String!, password: String!): AuthResponse
-    setMyCompany(companyId: ID!): UserResponse
+    setUserCompany(userId: ID!, companyId: ID!): UserResponse
     createJobPost(input: CreateJobPostInput!): JobPostResponse
     updateJobPost(input: UpdateJobPostInput!): JobPostResponse
     deleteJobPost(id: ID!): DeleteJobPostResponse

@@ -11,6 +11,7 @@ export interface MyContext {
     id: string
     email: string
   } | null
+  apiTokenAuth?: boolean
 }
 
 async function bootstrap() {
@@ -25,8 +26,10 @@ async function bootstrap() {
       listen: { port: config.port(), host: '0.0.0.0' },
       context: async ({ req }) => {
         let authUser: { id: string; email: string } | null = null
+        let apiTokenAuth = false
         try {
-          const auth = req.headers.authorization || req.headers.Authorization
+          const auth = (req.headers.authorization ||
+            req.headers.Authorization) as string | undefined
           if (typeof auth === 'string' && auth.startsWith('Bearer ')) {
             const token = auth.slice('Bearer '.length).trim()
             const jwt = await import('jsonwebtoken')
@@ -40,11 +43,21 @@ async function bootstrap() {
         } catch (_) {
           authUser = null
         }
+        try {
+          const apiKey = (req.headers['x-api-key'] ||
+            req.headers['X-API-KEY']) as string | undefined
+          if (apiKey && apiKey === config.apiToken()) {
+            apiTokenAuth = true
+          }
+        } catch (_) {
+          apiTokenAuth = false
+        }
         return {
           dataSources: {
             booksAPI: new BooksDataSource(),
           },
           authUser,
+          apiTokenAuth,
         }
       },
     })

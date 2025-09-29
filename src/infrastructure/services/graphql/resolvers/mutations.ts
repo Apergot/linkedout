@@ -49,11 +49,19 @@ const mutations = {
       }
     }
   },
-  setMyCompany: async (_, { companyId }, ctx) => {
+  setUserCompany: async (_, { userId, companyId }, ctx) => {
     try {
+      if (!ctx?.apiTokenAuth) {
+        return {
+          code: '401',
+          success: false,
+          message: 'Unauthorized: superadmin API token required',
+          user: null,
+        }
+      }
       const service = Factory.getUserService()
-      const action = await service.setMyCompany()
-      const result = await action({ userId: ctx.authUser.id, companyId })
+      const action = await service.setUserCompany()
+      const result = await action({ userId, companyId })
       return {
         code: '200',
         success: true,
@@ -85,8 +93,16 @@ const mutations = {
   addBook: async (_, { title, author }, { dataSources }) => {
     return dataSources.booksAPI.addBook({ title, author })
   },
-  createCompany: async (_, { name }) => {
+  createCompany: async (_, { name }, ctx) => {
     try {
+      if (!ctx?.apiTokenAuth) {
+        return {
+          code: '401',
+          success: false,
+          message: 'Unauthorized: superadmin API token required',
+          company: null,
+        }
+      }
       const service = Factory.getCompanyService()
       const action = await service.create()
       const result = await action({ name: name ?? '' })
@@ -98,7 +114,6 @@ const mutations = {
         company: { name: result.name },
       }
     } catch (err: any) {
-      console.log(err)
       const message = err?.message ?? 'Unexpected error while creating company'
       const isValidation = err?.name === 'ValidationError'
       return {

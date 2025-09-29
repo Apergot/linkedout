@@ -20,4 +20,5 @@ export default {
   databasePassword: () => getRequiredEnv('DATABASE_PASSWORD'),
   databaseName: () => getRequiredEnv('DATABASE_NAME'),
   jwtSecret: () => getRequiredEnv('JWT_SECRET'),
+  apiToken: () => getRequiredEnv('API_TOKEN'),
 }

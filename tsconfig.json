@@ -12,7 +12,7 @@
     "esModuleInterop": true,
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
-    "types": ["node"],
+    "types": ["node", "jest"],
     "resolveJsonModule": true,
     "allowJs": true
   },

@@ -1,5 +1,5 @@
 import { type GraphQLResolveInfo } from 'graphql'
-import { type MyContext } from '../../../../index'
+import { type MyContext } from '../contextBuilder'
 export type Maybe<T> = T | null
 export type InputMaybe<T> = Maybe<T>
 export type Exact<T extends Record<string, unknown>> = {
